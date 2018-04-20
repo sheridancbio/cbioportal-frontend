@@ -27,6 +27,7 @@ export interface IAppConfig {
     skinDatasetFooter?: string;
     skinRightNavShowDatasets?: boolean;
     skinRightNavShowExamples?: boolean;
+    skinRightNavShowInstallationMap?: boolean;
     skinRightNavShowTestimonials?: boolean;
     skinRightNavExamplesHTML?: string;
     skinRightNavWhatsNewBlurb?: string;

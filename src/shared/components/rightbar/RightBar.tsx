@@ -2,6 +2,7 @@ import * as React from 'react';
 import BarGraph from "../barGraph/BarGraph";
 import {observer} from "mobx-react";
 import {TypeOfCancer as CancerType} from "../../api/generated/CBioPortalAPI";
+import InstallationMap from "../installationMap/InstallationMap";
 import Testimonials from "../testimonials/Testimonials";
 import {ThreeBounce} from 'better-react-spinkit';
 import AppConfig from "appConfig";
@@ -170,6 +171,14 @@ export default class RightBar extends React.Component<IRightBarProps, IRightBarS
 
         const examples:JSX.Element | null = AppConfig.skinRightNavShowExamples? RightBar.getExampleSection() : null;
 
+        const installationMap:JSX.Element | null = true?
+            (
+                <div className="rightBarSection" style={{minHeight: '30px'}}>
+                    <h3>cBioPortal Website Hosts</h3>
+                    <InstallationMap/>
+                </div>
+            ) : null;
+
         const testimonials:JSX.Element | null = AppConfig.skinRightNavShowTestimonials?
             (
                 <div className="rightBarSection" style={{minHeight: '300px'}}>
@@ -184,6 +193,7 @@ export default class RightBar extends React.Component<IRightBarProps, IRightBarS
                 {this.getWhatsNew()}
                 {datasets}
                 {examples}
+                {installationMap}
                 {testimonials}
             </div>
         );

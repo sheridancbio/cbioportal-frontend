@@ -36,6 +36,7 @@ if (parentProjectFrontendConfig) {
         skinDatasetFooter : 'Data sets of TCGA studies were downloaded from Broad Firehose (http://gdac.broadinstitute.org) and updated monthly. In some studies, data sets were from the TCGA working groups directly.',
         skinRightNavShowDatasets : true,
         skinRightNavShowExamples : true,
+        skinRightNavShowInstallationMap : true,
         skinRightNavShowTestimonials : true,
         //labels to be displayed in oncoprint "Mutation color" menu for custom annotation of driver and passenger mutations in the oncoprint.
         // Set any of these properties to enable the respective menu options in oncoprint:
