@@ -116,28 +116,19 @@ export default class PortalHeader extends React.Component<{ appStore:AppStore },
                 </nav>
             </div>
             <div id="rightHeaderContent">
-                <If condition={!AppConfig.hide_login}>
-                    <If condition={this.props.appStore.isLoggedIn}>
-                        <Then>
-                            <div className="identity">
-                                <Dropdown id="dat-dropdown">
-                                    <Dropdown.Toggle className="btn-sm">
-                                        Logged in as {this.props.appStore.userName}
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu style={{ paddingLeft:10, overflow:'auto', maxHeight:300, whiteSpace:'nowrap' }}>
-                                        <DataAccessTokensDropdown appStore={this.props.appStore}/>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </div>
-                        </Then>
-                        <Else>
-                            <If condition={AppConfig.serverConfig.authenticationMethod &&  AppConfig.serverConfig.authenticationMethod.includes("social_auth")}>
-                                <SocialAuthButton appStore={this.props.appStore}/>
-                            </If>
-                        </Else>
-                    </If>
-
+            	<If condition={!AppConfig.hide_login}>
+            	    <div className="identity">
+                        <Dropdown id="dat-dropdown">
+                            <Dropdown.Toggle className="btn-sm">
+                                Logged in as username
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu style={{ paddingLeft:10, overflow:'auto', maxHeight:300, whiteSpace:'nowrap' }}>
+                                <DataAccessTokensDropdown appStore={this.props.appStore}/>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </div>
                 </If>
+
                 <If condition={!_.isEmpty(AppConfig.serverConfig.skin_right_logo)}>
                     <img id="institute-logo" src={`images/${AppConfig.serverConfig.skin_right_logo!}`} alt="Institute Logo" />
                 </If>

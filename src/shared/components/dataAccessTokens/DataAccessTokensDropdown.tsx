@@ -5,10 +5,12 @@ import internalClient from "shared/api/cbioportalInternalClientInstance";
 import {AppStore} from "../../../AppStore";
 import LoadingIndicator from "../loadingIndicator/LoadingIndicator";
 import {observer} from "mobx-react";
-import {observable, computed} from "mobx";
+import {action, observable, computed} from "mobx";
 import {buildCBioPortalPageUrl} from "../../api/urls";
 import {isNullOrUndefined} from "util";
+import {DataAccessTokensModal} from "./DataAccessTokensModal";
 import fileDownload from 'react-file-download';
+import autobind from "autobind-decorator";
 
 export class UserDataAccessToken {
     @observable token : string;
@@ -21,6 +23,7 @@ export class UserDataAccessToken {
         this.expirationDate = expirationDate;
         this.username = username;
     }
+
 }
 
 export interface IDataAccessTokensProps {
@@ -45,6 +48,14 @@ function buildDataAccessTokenFileContents(dat:UserDataAccessToken | undefined) {
 
 @observer
 export class DataAccessTokensDropdown extends React.Component<IDataAccessTokensProps, {}> {
+    @observable showTokenDialog:boolean = false;
+
+    @autobind
+    @action
+    toggleTokenDialog(){
+        this.showTokenDialog = !this.showTokenDialog;
+    }
+
     public static defaultProps: Partial<IDataAccessTokensProps> = {
         loadingComponent:<LoadingIndicator isLoading={true}/>
     };
@@ -62,8 +73,10 @@ export class DataAccessTokensDropdown extends React.Component<IDataAccessTokensP
             },
             {
                 id:"datDownload",
-                action:<a onClick={() => this.downloadDataAccessTokenFile()}>Download token</a>,
-                hide:(AppConfig.serverConfig.authenticationMethod === "social_auth" || (AppConfig.serverConfig.dat_method !== "uuid" && AppConfig.serverConfig.dat_method !== "jwt"))
+                action:<a onClick={this.toggleTokenDialog}>Download token<DataAccessTokensModal onHide={this.toggleTokenDialog}/></a>,
+                //TODO we want to add some logic here to not try to compute the modal when it is hidden -- like (this.showTokenDialog) && (
+//                hide:(AppConfig.serverConfig.authenticationMethod === "social_auth" || (AppConfig.serverConfig.dat_method !== "uuid" && AppConfig.serverConfig.dat_method !== "jwt"))
+                hide:false
             }
         ];
         const shownListItems = listItems.filter((l)=>{
@@ -76,10 +89,13 @@ export class DataAccessTokensDropdown extends React.Component<IDataAccessTokensP
     }
 
     async downloadDataAccessTokenFile() {
-        const dat = await this.generateNewDataAccessToken();
-        if (!isNullOrUndefined(dat)) {
-            const fileContents = buildDataAccessTokenFileContents(dat);
-            fileDownload(fileContents, "cbioportal_data_access_token.txt");
+        this.showTokenDialog = !this.showTokenDialog;
+        if (this.showTokenDialog) {
+            const dat = await this.generateNewDataAccessToken();
+            if (!isNullOrUndefined(dat)) {
+                const fileContents = buildDataAccessTokenFileContents(dat);
+                fileDownload(fileContents, "cbioportal_data_access_token.txt");
+            }
         }
     }
 

@@ -1,0 +1,87 @@
+import * as React from "react";
+import * as _ from 'lodash';
+import {observer} from "mobx-react";
+import {Modal} from 'react-bootstrap';
+import {observable} from "mobx";
+//import {ShareUrls} from "../querySummary/ShareUI";
+import classNames from "classnames";
+import autobind from "autobind-decorator";
+import LoadingIndicator from "shared/components/loadingIndicator/LoadingIndicator";
+var Clipboard = require('clipboard');
+
+
+@observer
+export class DataAccessTokensModal extends React.Component<{ onHide: () => void}, {}> {
+
+//    @observable
+//    urlData:ShareUrls;
+
+//    clipboards:any[] = [];
+
+//    componentDidMount(){
+//        // this is an $.ajax promise, not a real promise
+//        this.props.urlPromise.then(
+//            (data)=>{
+//                this.urlData = data;
+//                setTimeout(()=>{
+//                    this.initializeClipboards();
+//                },0);
+//            },
+//            ()=>{
+//
+//            }
+//        );
+//    }
+
+//    @autobind
+//    showThumb(e:any){
+//        e.target.className="fa fa-thumbs-up";
+//    }
+
+//    @autobind
+//    initializeClipboards(){
+//            this.clipboards.push(new Clipboard(this.sessionButton, {
+//                text: function() {
+//                    return this.urlData.sessionUrl || this.urlData.fullUrl;
+//                }.bind(this),
+//                container: this.container
+//            }));
+//
+//            if (this.urlData && this.urlData.bitlyUrl) {
+//                this.clipboards.push(new Clipboard(this.bitlyButton, {
+//                    text: function () {
+//                        return this.urlData.bitlyUrl;
+//                    }.bind(this),
+//                    container: this.container
+//                }));
+//            }
+//    }
+
+//    componentWillUnmount(){
+//        // we need to clean up clipboards
+//        this.clipboards.forEach((clipboard:any)=>clipboard.destroy());
+//    }
+
+//    public sessionButton:HTMLAnchorElement;
+
+//    public bitlyButton:HTMLAnchorElement;
+
+    public container:HTMLDivElement;
+
+    render() {
+
+        //NOTE: internal div id necessary for
+        return <Modal show={true} onHide={this.props.onHide}>
+            <Modal.Header closeButton>
+                <Modal.Title>Using the Web API</Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{minHeight:70}}>
+                <div className="DatModal" ref={(el:HTMLDivElement)=>this.container=el}>
+                    <h1> hello world </h1>
+                </div>
+            </Modal.Body>
+        </Modal>
+    }
+
+}
+//                <LoadingIndicator size={"big"} center={true} style={{top:32}} isLoading={!this.urlData}/>
