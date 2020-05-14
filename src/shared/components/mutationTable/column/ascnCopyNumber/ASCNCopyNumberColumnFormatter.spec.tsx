@@ -90,6 +90,33 @@ function test_copy_number_render(
     expectedTotalCopyNumberValue: string,
     expectedBackgroundColor: string
 ) {
+    // Test ascnCopyNumberElement properties are set
+    //sampleId: string;
+    //wgdValue: string;
+    //totalCopyNumberValue: string;
+    //minorCopyNumberValue: string;
+    //ascnCopyNumberValue: string;
+    //sampleManager?: SampleManager | null;
+
+    // Test ASCNCopyNumberElementTooltip properties are set
+
+    /* WE WERE WORKING HERE
+    let theElement = cellWrapper.find('ASCNCopyNumberElement');
+    console.log('PRINTING COMPONENT');
+    console.log("sampleid:" + theElement.prop('sampleId'));
+    let tooltipElement = theElement.find('DefaultTooltip');
+    let tooltipElementOverlay = tooltipElement.prop('overlay');
+
+    let tooltipElement = theElement.findWhere(
+                 overlay={<ASCNCopyNumberElementTooltip {...props} />} 
+overlay={<ASCNCopyNumberElementTooltip {...props} />}
+
+
+    //console.log("minorCopyNumberVal_from_tooltip:" + tooltipElement.prop('minorCopyNumberValue'));
+    console.log("number of tool tips found: " + tooltipElement.length);
+    console.log('DONE PRINTING COMPONENT');
+    
+*/
     // console.log(' samples with ascn data: ');
     // cellWrapper.find('text').forEach(el => {
     //     console.log(el.html());
