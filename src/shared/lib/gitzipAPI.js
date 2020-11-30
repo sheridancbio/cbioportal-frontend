@@ -13,6 +13,8 @@ var _global =
 (function() {
     function fn() {}
 
+    var JSZip = require('jszip');
+    var FileSaver = require('file-saver');
     var repoExp = new RegExp(
         '^https://github.com/([^/]+)/([^/]+)(/(tree|blob)/([^/]+)(/(.*))?)?'
     );
@@ -33,17 +35,6 @@ var _global =
             return str.substring(0, str.length - 1);
         return str;
     };
-
-    function myFunc() {
-        var params = 'test';
-        if (typeof params === 'object') {
-            console.log('blah');
-        }
-        console.log('hi');
-        return true;
-    }
-    //alert(myFunc);
-    //myFunc();
 
     var statusHandle = function(status) {
         if (status == 'error' || status == 'done') isBusy = false;
@@ -97,9 +88,7 @@ var _global =
     var _githubUrlChecker = {
         _workerBlobUrl: null,
         _branchChecker: function(baseUrl, branch, path) {
-            //alert("_branchChecker");
             if (!this._workerBlobUrl) {
-                //alert("!this._workerBlobUrl");
                 this._workerBlobUrl = URL.createObjectURL(
                     new Blob(
                         [
@@ -107,11 +96,10 @@ var _global =
                             function() {
                                 //Long-running work here
                                 function makeRequest(opts) {
-                                    //alert("Make request"); // does not get here
                                     var xhr = new XMLHttpRequest();
                                     var params = opts.params,
                                         strParams;
-                                    //if (params && typeof params === 'object') {
+                                    //                            if (params && typeof params === 'object') {
                                     strParams = Object.keys(params)
                                         .map(function(key) {
                                             return (
@@ -121,7 +109,7 @@ var _global =
                                             );
                                         })
                                         .join('&');
-                                    //}
+                                    //                            }
                                     xhr.open(
                                         opts.method || 'GET',
                                         opts.url + '?' + strParams,
@@ -194,7 +182,6 @@ var _global =
                         { type: 'application/javascript' }
                     )
                 );
-                //alert(this._workerBlobUrl);
             }
 
             var checkWorker = new Worker(this._workerBlobUrl);
@@ -202,25 +189,19 @@ var _global =
             if (path && path[path.length - 1] == '/')
                 path = path.substring(0, path.length - 1);
             // pass parameter to worker
-            //alert("about to call checkWorker.postMessage");
             checkWorker.postMessage({
                 baseUrl: baseUrl,
                 branchTry: branch,
                 pathTry: path || '',
                 params: token ? { access_token: token } : {},
             });
-            //alert("done calling checkWorker.postMessage");
 
             return new Promise(function(resolve, reject) {
-                //alert("in another promise");
                 checkWorker.onmessage = function(e) {
                     // e.data
-                    //alert("in checkWorker.onmessage");
-                    //alert(typeof e.data);
                     if (e.data && typeof e.data == 'object') resolve(e.data);
                     else reject(e.data);
                 };
-                //alert("checkWorker.onmessage: " + checkWorker.onmessage);
             });
         },
         caches: [],
@@ -231,7 +212,6 @@ var _global =
          * @return {Promise<ResolvedURL>}
          */
         check: function(repoUrl) {
-            //alert(repoUrl);
             if (typeof repoUrl != 'string') return Promise.reject();
 
             var self = this,
@@ -247,7 +227,6 @@ var _global =
             }
 
             results.inputUrl = repoUrl;
-            //alert("results.inputUrl" + results.inputUrl);
             // load from cache
             if (self.caches.length > 0) {
                 for (var i = 0, len = self.caches.length; i < len; i++) {
@@ -273,40 +252,12 @@ var _global =
                 results.author = matches[1]; // case: Microsoft
                 results.project = matches[2]; // case: CNTK
                 results.branch = results.path = results.rootUrl = '';
-
-                //alert(matches[1]);
-                //alert(matches[2]);
-                //alert(matches[3]);
-                //alert(matches[4]);
-                //alert(matches[5]);
-                //alert(matches[6]);
-                //alert(matches[7]);
                 if (matches[4]) {
                     // case: tree
-                    //alert("case tree");
+
                     results.type = matches[4];
 
                     return new Promise(function(resolve, reject) {
-                        //alert("promise called that was defined in check");
-                        promise = self._branchChecker(
-                            'https://api.github.com/repos/' +
-                                results.author +
-                                '/' +
-                                results.project +
-                                '/contents/',
-                            matches[5],
-                            matches[7]
-                        );
-                        //alert(promise);
-                        //alert(promise.status);
-                        promise.then(
-                            value => {
-                                //alert("Success!" + value); // Success!
-                            },
-                            reason => {
-                                //alert("Error!" + reason); // Error!
-                            }
-                        );
                         self._branchChecker(
                             'https://api.github.com/repos/' +
                                 results.author +
@@ -317,7 +268,6 @@ var _global =
                             matches[7]
                         )
                             .then(function(res) {
-                                //alert("in promise after _branchChecker");
                                 var rootUrl =
                                     'https://github.com/' +
                                     results.author +
@@ -325,7 +275,6 @@ var _global =
                                     results.project +
                                     '/tree/' +
                                     res.branch;
-                                //alert("rootURL: " + rootUrl);
                                 self.caches.push({
                                     author: results.author,
                                     project: results.project,
@@ -341,7 +290,6 @@ var _global =
                                     rootUrl: rootUrl,
                                 });
                                 results.branch = res.branch;
-                                //alert("results.branch: " + results.branch);
                                 results.path = _filterTailSlash(res.path);
                                 results.rootUrl = rootUrl;
                                 resolve(results);
@@ -358,7 +306,6 @@ var _global =
                         results.project;
                     return Promise.resolve(results);
                 }
-                //alert("where are we?!");
             }
             return Promise.reject();
         },
@@ -472,12 +419,12 @@ var _global =
         if (isSafari) {
             zip.generateAsync({ type: 'base64' }).then(function(content) {
                 downloadZipUseElement('data:application/zip;base64,' + content);
-                //alert("Please remember change file name to xxx.zip");
+                alert('Please remember change file name to xxx.zip');
             });
         } else {
             zip.generateAsync({ type: 'blob' }).then(
                 function(content) {
-                    saveAs(content, filename + '.zip');
+                    FileSaver.saveAs(content, filename + '.zip');
                 },
                 function(error) {
                     console.log(error);
@@ -627,17 +574,13 @@ var _global =
      * @param {object|undefined} callbackScope - The scope of the progressCallback function.
      */
     function createURL(pathToFolder, callbackScope) {
-        //alert("In createURL with pathToFolder: " + pathToFolder);
         if (isBusy) throw 'GitZip is busy...';
         callbackScope = callbackScope || _global;
         progressCallback.call(callbackScope, 'prepare', 'Resolving URL');
-        //alert("Resolving URL...");
         _githubUrlChecker
             .check(pathToFolder)
             .then(function(resolved) {
-                //alert("resolved?");
                 if (!resolved.path) {
-                    //alert("not resolved path");
                     // root
                     var durl = [
                         'https://github.com',
@@ -649,9 +592,7 @@ var _global =
                     var gitURL = durl + '.zip';
                     // downloadZip(gitURL, callbackScope);
                     downloadZipUseElement(gitURL, callbackScope);
-                    //alert("URL: " + gitURL);
                 } else {
-                    //alert("resolved path");
                     progressCallback.call(
                         callbackScope,
                         'prepare',
@@ -662,7 +603,6 @@ var _global =
                     if (token) params['access_token'] = token;
 
                     if (resolved.type == 'tree') {
-                        //alert("tree resolved type");
                         // for tree handles
                         _callAjax(
                             'https://api.github.com/repos/' +
