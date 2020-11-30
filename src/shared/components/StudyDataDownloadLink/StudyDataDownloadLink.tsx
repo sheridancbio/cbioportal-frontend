@@ -1,28 +1,26 @@
 import * as React from 'react';
-import { trackEvent } from 'shared/lib/tracking';
+import GitZip from 'shared/lib/gitzipAPI';
 
 export class StudyDataDownloadLink extends React.Component<
     { studyId: string; className?: string },
     {}
 > {
+    handleClick() {
+        //alert(this.props.studyId);
+        GitZip.zipRepo(
+            'https://github.com/cBioPortal/datahub/tree/master/public/' +
+                this.props.studyId,
+            undefined
+        );
+    }
+
     render() {
         return (
             <a
                 className="dataset-table-download-link"
                 style={{ display: 'block' }}
-                href={
-                    'http://download.cbioportal.org/' +
-                    this.props.studyId +
-                    '.tar.gz'
-                }
-                download
-                onClick={() =>
-                    trackEvent({
-                        category: 'download',
-                        action: 'study download',
-                        label: this.props.studyId,
-                    })
-                }
+                href="#"
+                onClick={this.handleClick.bind(this)}
             >
                 <i className="fa fa-download" />
             </a>
